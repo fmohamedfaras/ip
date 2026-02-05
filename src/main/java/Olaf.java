@@ -11,8 +11,8 @@ public class Olaf {
     private static final String COMMAND_MARK = "mark";
     private static final String COMMAND_UNMARK = "unmark";
 
-    private static String[] list = new String[CAPACITY];
-    private static boolean[] isMarked = new boolean[CAPACITY];
+    private static Task[] tasks = new Task[CAPACITY];
+    private static int taskCount = 0;
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
@@ -20,63 +20,80 @@ public class Olaf {
         System.out.println(WELCOME_MESSAGE);
 
         boolean isActive = true;
-        int count = 0;
 
         while (isActive) {
            String input = scanner.nextLine();
 
             System.out.println(DIVIDER);
 
-            String[] parts = input.split(" ");
-            String command = parts[0];
+            String[] inputParts = input.split(" ");
+            String command = inputParts[0];
 
-            switch (command){
+            switch (command) {
             case COMMAND_BYE:
-                    System.out.println("    Bye. Hope to see you again soon!");
-                    System.out.println(DIVIDER);
-                    isActive = false;
-                    scanner.close();
-                    break;
+                printBye();
+                isActive = false;
+                break;
 
             case COMMAND_LIST:
-                System.out.println("    Here are the tasks in your list:");
-                for (int i = 0; i < count; i++){
-                    String status = isMarked[i] ? "[X] " : "[ ] ";
-                    System.out.println("    " + (i + 1) + "." + status + list[i]);
-                }
-                System.out.println(DIVIDER);
+                listTasks();
                 break;
 
             case COMMAND_MARK:
-                int markIndex = Integer.parseInt(parts[1]) - 1;
-                isMarked[markIndex] = true;
-
-                System.out.println("    Nice! I've marked this task as done:");
-                System.out.println("    [X] " + list[markIndex]);
-                System.out.println(DIVIDER);
+                markTask(inputParts);
                 break;
 
             case COMMAND_UNMARK:
-                int unmarkIndex = Integer.parseInt(parts[1]) - 1;
-                isMarked[unmarkIndex] = false;
-
-                System.out.println("    OK, I've marked this task as not done yet:");
-                System.out.println("    [ ] " + list[unmarkIndex]);
-                System.out.println(DIVIDER);
+                unmarkTask(inputParts);
                 break;
 
             default:
-                System.out.println("    added: " + input);
-                list[count] = input;
-                isMarked[count] = false;
-                count++;
-                System.out.println(DIVIDER);
-
+                addTask(input);
             }
-
         }
-
+        scanner.close();
     }
+
+    public static void addTask(String input) {
+        tasks[taskCount] = new Task(input);
+        taskCount++;
+        System.out.println("    added: " + input);
+        System.out.println(DIVIDER);
+    }
+
+    public static void listTasks() {
+        if (taskCount == 0) {
+            System.out.println("    There are no pending tasks.");
+        } else {
+            System.out.println("    Here are the tasks in your list:");
+            for (int i = 0; i < taskCount; i++){
+                System.out.println("    " + (i + 1) + "." + tasks[i]);
+            }
+            System.out.println(DIVIDER);
+        }
+    }
+
+    public static void printBye() {
+        System.out.println("    Bye. Hope to see you again soon!");
+        System.out.println(DIVIDER);
+    }
+
+    public static void markTask(String[] parts) {
+        int markIndex = Integer.parseInt(parts[1]) - 1;
+        tasks[markIndex].markAsDone();
+        System.out.println("    Nice! I've marked this task as done:");
+        System.out.println("     " + tasks[markIndex]);
+        System.out.println(DIVIDER);
+    }
+
+    public static void unmarkTask(String[] parts) {
+        int markIndex = Integer.parseInt(parts[1]) - 1;
+        tasks[markIndex].unmarkAsDone();
+        System.out.println("    OK, I've marked this task as not done yet:");
+        System.out.println("     " + tasks[markIndex]);
+        System.out.println(DIVIDER);
+    }
+
 }
 
 
