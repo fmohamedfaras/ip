@@ -94,14 +94,17 @@ public class Olaf {
         ui.showAdded(tasks[taskCount - 1], taskCount);
     }
 
-
     private static void addEvent(String input) throws OlafException {
 
         if (input.isEmpty()) {
             throw new OlafException(Ui.ERROR_EMPTY_TASK);
         }
-        if (!input.contains(" /from ") || !input.contains(" /to ")) {
+        if (!input.contains(" /from ")) {
             throw new OlafException(Ui.ERROR_MISSING_FROM_TO);
+        }
+
+        if (!input.contains(" /to ")) {
+            throw new OlafException(Ui.ERROR_MISSING_TO);
         }
         // split by " /from " first
         String[] parts = input.split(" /from ");
@@ -112,7 +115,7 @@ public class Olaf {
         String from = timeParts[0];
         String to = timeParts[1];
 
-        if (timeParts.length < 2) {
+        if (to.isBlank()) {
             throw new OlafException(Ui.ERROR_MISSING_TO);
         }
 
@@ -121,20 +124,36 @@ public class Olaf {
         ui.showAdded(tasks[taskCount - 1], taskCount);
     }
 
-    public static void markTask(String parts) {
-        int markIndex = Integer.parseInt(parts) - 1;
-        tasks[markIndex].markAsDone();
-        System.out.println("    Nice! I've marked this task as done:");
-        System.out.println("     " + tasks[markIndex]);
-        System.out.println(DIVIDER);
+    private static void markTask(String args) throws OlafException {
+        if (args.isEmpty()) {
+            throw new OlafException(Ui.ERROR_NO_INDEX);
+        }
+        try {
+            int index = Integer.parseInt(args) - 1;
+            if (index < 0 || index >= taskCount) {
+                throw new OlafException(Ui.ERROR_INVALID_INDEX);
+            }
+            tasks[index].markAsDone();
+            ui.showMarked(tasks[index]);
+        } catch (NumberFormatException e) {
+            throw new OlafException(Ui.ERROR_NOT_A_NUMBER);
+        }
     }
 
-    public static void unmarkTask(String parts) {
-        int markIndex = Integer.parseInt(parts) - 1;
-        tasks[markIndex].unmarkAsDone();
-        System.out.println("    OK, I've marked this task as not done yet:");
-        System.out.println("     " + tasks[markIndex]);
-        System.out.println(DIVIDER);
+    private static void unmarkTask(String args) throws OlafException {
+        if (args.isEmpty()) {
+            throw new OlafException(Ui.ERROR_NO_INDEX);
+        }
+        try {
+            int index = Integer.parseInt(args) - 1;
+            if (index < 0 || index >= taskCount) {
+                throw new OlafException(Ui.ERROR_INVALID_INDEX);
+            }
+            tasks[index].unmarkAsDone();
+            ui.showUnmarked(tasks[index]);
+        } catch (NumberFormatException e) {
+            throw new OlafException(Ui.ERROR_NOT_A_NUMBER);
+        }
     }
 
 }

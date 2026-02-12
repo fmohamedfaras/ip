@@ -2,8 +2,8 @@ public class Ui {
     private static final String DIVIDER = "     ____________________________________________________________";
     private static final String INDENT = "     ";
 
-    public static final String ERROR_UNKNOWN_COMMAND = "I don't know what that means. Is it Samantha? (laughs hysterically) I don't even know a Samantha!";
-    public static final String ERROR_EMPTY_TASK = "Stop it, Sven. Try and focus here. \n    The description is empty. A task needs a name, just like I do!";
+    public static final String ERROR_UNKNOWN_COMMAND = "I don't know what that means. Samantha? (laughs hysterically) I don't even know a Samantha!";
+    public static final String ERROR_EMPTY_TASK = "Stop it, Sven. Try and focus here. \n     The description is empty. A task needs a name.";
     public static final String ERROR_MISSING_BY = "I need to know when! Please use '/by' so I don't forget.";
     public static final String ERROR_MISSING_FROM_TO = "Events need a start and end! Use '/from' and '/to'. Time is tricky!";
     public static final String ERROR_MISSING_TO = "You forgot the ending time! Use '/to'.";
@@ -31,7 +31,7 @@ public class Ui {
     }
 
     public void showError(String message) {
-        System.out.println(INDENT + "OH NO! " + message);
+        System.out.println(INDENT + message);
         showLine();
     }
 
@@ -62,9 +62,10 @@ public class Ui {
     }
 
     public void showAdded(Task task, int count) {
+        String taskPlural = (count == 1) ? " task " : " tasks ";
         System.out.println(INDENT + "This just got a lot more complicated. I've added this to your list:");
         System.out.println(INDENT + task);
-        System.out.println(INDENT + "Now you have " + count + " tasks in the list.");
+        System.out.println(INDENT + "Now you have " + count + taskPlural + "in the list.");
         showLine();
     }
 }
