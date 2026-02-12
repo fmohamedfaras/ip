@@ -4,8 +4,6 @@ import java.util.Scanner;
 public class Olaf {
 
     private static final int CAPACITY = 100;
-    private static final String DIVIDER = "     ____________________________________________________________";
-    private static final String WELCOME_MESSAGE = "     Hello! I'm Olaf and I like warm hugs!";
     private static final String COMMAND_LIST = "list";
     private static final String COMMAND_BYE = "bye";
     private static final String COMMAND_MARK = "mark";
@@ -17,89 +15,97 @@ public class Olaf {
     private static Task[] tasks = new Task[CAPACITY];
     private static int taskCount = 0;
 
+    private static Ui ui = new Ui();
+
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        System.out.println(DIVIDER);
-        System.out.println(WELCOME_MESSAGE);
+        ui.showWelcome();
 
         boolean isActive = true;
 
         while (isActive) {
            String input = scanner.nextLine();
-
-            System.out.println(DIVIDER);
+            ui.showLine();
 
             String[] parts = input.split(" ", 2); // Split into command + rest of string
             String command = parts[0];
             String taskName = (parts.length > 1) ? parts[1] : "";
 
-            switch (command) {
-            case COMMAND_BYE:
-                printBye();
-                isActive = false;
-                break;
+            try {
+                switch (command) {
+                case COMMAND_BYE:
+                    ui.showBye();
+                    isActive = false;
+                    break;
 
-            case COMMAND_LIST:
-                listTasks();
-                break;
+                case COMMAND_LIST:
+                    ui.showTaskList(tasks, taskCount);
+                    break;
 
-            case COMMAND_MARK:
-                markTask(taskName);
-                break;
+                case COMMAND_MARK:
+                    markTask(taskName);
+                    break;
 
-            case COMMAND_UNMARK:
-                unmarkTask(taskName);
-                break;
+                case COMMAND_UNMARK:
+                    unmarkTask(taskName);
+                    break;
 
-            case COMMAND_TODO:
-                addTodo(taskName);
-                break;
+                case COMMAND_TODO:
+                    addTodo(taskName);
+                    break;
 
-            case COMMAND_DEADLINE:
-                addDeadline(taskName);
-                break;
+                case COMMAND_DEADLINE:
+                    addDeadline(taskName);
+                    break;
 
-            case COMMAND_EVENT:
-                addEvent(taskName);
-                break;
+                case COMMAND_EVENT:
+                    addEvent(taskName);
+                    break;
 
-            default:
-                System.out.println("    Unknown command. Please try again.");
-                System.out.println(DIVIDER);
+                default:
+                    throw new OlafException(Ui.ERROR_UNKNOWN_COMMAND);
+                }
+            } catch (OlafException e) {
+                ui.showError(e.getMessage());
             }
         }
         scanner.close();
     }
 
-    public static void addTodo(String input) {
+    public static void addTodo(String input) throws OlafException {
+        if (input.isEmpty()) {
+            throw new OlafException(Ui.ERROR_EMPTY_TASK);
+        }
         tasks[taskCount] = new Todo(input);
         taskCount++;
-
-        String taskPlural = (taskCount == 1) ? " task " : " tasks ";
-
-        System.out.println("    Got it. I've added this task:");
-        System.out.println("      " + tasks[taskCount - 1]);
-        System.out.println("    Now you have " + taskCount + taskPlural + "in the list.");
-        System.out.println(DIVIDER);
+        ui.showAdded(tasks[taskCount - 1], taskCount);
     }
 
-    private static void addDeadline(String input) {
+    private static void addDeadline(String input) throws OlafException {
+        if (input.isEmpty()) {
+            throw new OlafException(Ui.ERROR_EMPTY_TASK);
+        }
+        if (!input.contains(" /by ")) {
+            throw new OlafException(Ui.ERROR_MISSING_BY);
+        }
         String[] parts = input.split(" /by ");
-        String description = parts[0];
-        String by = parts[1];
-
-        tasks[taskCount] = new Deadline(description, by);
+        tasks[taskCount] = new Deadline(parts[0], parts[1]);
         taskCount++;
-
-        String taskPlural = (taskCount == 1) ? " task " : " tasks ";
-
-        System.out.println("    Got it. I've added this task:");
-        System.out.println("      " + tasks[taskCount - 1]);
-        System.out.println("    Now you have " + taskCount + taskPlural + "in the list.");
-        System.out.println(DIVIDER);
+        ui.showAdded(tasks[taskCount - 1], taskCount);
     }
 
-    private static void addEvent(String input) {
+    private static void addEvent(String input) throws OlafException {
+
+        if (input.isEmpty()) {
+            throw new OlafException(Ui.ERROR_EMPTY_TASK);
+        }
+        if (!input.contains(" /from ")) {
+            throw new OlafException(Ui.ERROR_MISSING_FROM_TO);
+        }
+
+        if (!input.contains(" /to ")) {
+            throw new OlafException(Ui.ERROR_MISSING_TO);
+        }
         // split by " /from " first
         String[] parts = input.split(" /from ");
         String description = parts[0];
@@ -109,48 +115,45 @@ public class Olaf {
         String from = timeParts[0];
         String to = timeParts[1];
 
-        tasks[taskCount] = new Event(description, from, to);
+        if (to.isBlank()) {
+            throw new OlafException(Ui.ERROR_MISSING_TO);
+        }
+
+        tasks[taskCount] = new Event(description, timeParts[0], timeParts[1]);
         taskCount++;
-
-        String taskPlural = (taskCount == 1) ? " task " : " tasks ";
-
-        System.out.println("    Got it. I've added this task:");
-        System.out.println("      " + tasks[taskCount - 1]);
-        System.out.println("    Now you have " + taskCount + taskPlural + "in the list.");
-        System.out.println(DIVIDER);
+        ui.showAdded(tasks[taskCount - 1], taskCount);
     }
 
-    public static void listTasks() {
-        if (taskCount == 0) {
-            System.out.println("    There are no pending tasks.");
-        } else {
-            System.out.println("    Here are the tasks in your list:");
-            for (int i = 0; i < taskCount; i++){
-                System.out.println("    " + (i + 1) + "." + tasks[i]);
+    private static void markTask(String args) throws OlafException {
+        if (args.isEmpty()) {
+            throw new OlafException(Ui.ERROR_NO_INDEX);
+        }
+        try {
+            int index = Integer.parseInt(args) - 1;
+            if (index < 0 || index >= taskCount) {
+                throw new OlafException(Ui.ERROR_INVALID_INDEX);
             }
-            System.out.println(DIVIDER);
+            tasks[index].markAsDone();
+            ui.showMarked(tasks[index]);
+        } catch (NumberFormatException e) {
+            throw new OlafException(Ui.ERROR_NOT_A_NUMBER);
         }
     }
 
-    public static void printBye() {
-        System.out.println("    Bye. Hope to see you again soon!");
-        System.out.println(DIVIDER);
-    }
-
-    public static void markTask(String parts) {
-        int markIndex = Integer.parseInt(parts) - 1;
-        tasks[markIndex].markAsDone();
-        System.out.println("    Nice! I've marked this task as done:");
-        System.out.println("     " + tasks[markIndex]);
-        System.out.println(DIVIDER);
-    }
-
-    public static void unmarkTask(String parts) {
-        int markIndex = Integer.parseInt(parts) - 1;
-        tasks[markIndex].unmarkAsDone();
-        System.out.println("    OK, I've marked this task as not done yet:");
-        System.out.println("     " + tasks[markIndex]);
-        System.out.println(DIVIDER);
+    private static void unmarkTask(String args) throws OlafException {
+        if (args.isEmpty()) {
+            throw new OlafException(Ui.ERROR_NO_INDEX);
+        }
+        try {
+            int index = Integer.parseInt(args) - 1;
+            if (index < 0 || index >= taskCount) {
+                throw new OlafException(Ui.ERROR_INVALID_INDEX);
+            }
+            tasks[index].unmarkAsDone();
+            ui.showUnmarked(tasks[index]);
+        } catch (NumberFormatException e) {
+            throw new OlafException(Ui.ERROR_NOT_A_NUMBER);
+        }
     }
 
 }
