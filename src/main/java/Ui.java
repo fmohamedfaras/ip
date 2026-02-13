@@ -1,3 +1,5 @@
+import Tasks.Task;
+
 public class Ui {
     private static final String DIVIDER = "     ____________________________________________________________";
     private static final String INDENT = "     ";
