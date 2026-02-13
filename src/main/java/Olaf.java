@@ -1,5 +1,10 @@
 import java.util.Scanner;
 
+import Tasks.Deadline;
+import Tasks.Event;
+import Tasks.Task;
+import Tasks.Todo;
+
 
 public class Olaf {
 
