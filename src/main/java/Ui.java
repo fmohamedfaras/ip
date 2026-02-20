@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 import Tasks.Task;
 
 public class Ui {
@@ -12,6 +14,7 @@ public class Ui {
     public static final String ERROR_INVALID_INDEX = "I can't find that number! Did it melt?";
     public static final String ERROR_NO_INDEX = "Who’s the funny-looking donkey… And who’s the reindeer? You didn't tell me the number!";
     public static final String ERROR_NOT_A_NUMBER = "I can’t read… or spell but that is definitely not a number!";
+    public static final String ERROR_NO_DELETE_INDEX = "You didn't tell me the number to delete silly!";
 
     public void showWelcome() {
         showLine();
@@ -37,14 +40,14 @@ public class Ui {
         showLine();
     }
 
-    public void showTaskList(Task[] tasks, int count) {
-        if (count == 0) {
+    public void showTaskList(ArrayList<Task> tasks) {
+        if (tasks.isEmpty()) {
             System.out.println(INDENT + "I don’t have a skull. Or bones.");
             System.out.println(INDENT + "Likewise, your list has nothing. Empty.");
         } else {
             System.out.println(INDENT + "Here are the things you need to do:");
-            for (int i = 0; i < count; i++) {
-                System.out.println(INDENT + (i + 1) + "." + tasks[i]);
+            for (int i = 0; i < tasks.size(); i++) {
+                System.out.println(INDENT + (i + 1) + "." + tasks.get(i));
             }
         }
         showLine();
@@ -66,6 +69,14 @@ public class Ui {
     public void showAdded(Task task, int count) {
         String taskPlural = (count == 1) ? " task " : " tasks ";
         System.out.println(INDENT + "This just got a lot more complicated. I've added this to your list:");
+        System.out.println(INDENT + task);
+        System.out.println(INDENT + "Now you have " + count + taskPlural + "in the list.");
+        showLine();
+    }
+
+    public void showDeleted(Task task, int count) {
+        String taskPlural = (count == 1) ? " task " : " tasks ";
+        System.out.println(INDENT + "This just got a lot less complicated. I've deleted this task:");
         System.out.println(INDENT + task);
         System.out.println(INDENT + "Now you have " + count + taskPlural + "in the list.");
         showLine();
