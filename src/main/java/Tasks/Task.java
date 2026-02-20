@@ -29,4 +29,11 @@ public class Task {
     public String toString() {
         return "[" + getStatusIcon() + "] " + description;
     }
+
+    // 1 for done, 0 for not done
+    public String toSaveFormat() {
+        return (isDone ? "1" : "0") + " | " + description;
+    }
 }
+
+

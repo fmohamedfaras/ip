@@ -22,8 +22,13 @@ public class Olaf {
 
     private static Ui ui = new Ui();
 
+    private static Storage storage = new Storage("./data/olaf.txt");
+
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
+
+        tasks = storage.load();
+
         ui.showWelcome();
 
         boolean isActive = true;
@@ -88,6 +93,8 @@ public class Olaf {
         Todo newTodo = new Todo(input);
         tasks.add(newTodo);
         ui.showAdded(newTodo, tasks.size());
+
+        storage.save(tasks);
     }
 
     private static void addDeadline(String input) throws OlafException {
@@ -101,6 +108,9 @@ public class Olaf {
         Deadline newDeadline = new Deadline(parts[0], parts[1]);
         tasks.add(newDeadline);
         ui.showAdded(newDeadline, tasks.size());
+
+        storage.save(tasks);
+
     }
 
     private static void addEvent(String input) throws OlafException {
@@ -131,6 +141,9 @@ public class Olaf {
         Event newEvent = new Event(description, timeParts[0], timeParts[1]);
         tasks.add(newEvent);
         ui.showAdded(newEvent, tasks.size());
+
+        storage.save(tasks);
+
     }
 
     private static void markTask(String input) throws OlafException {
@@ -138,12 +151,17 @@ public class Olaf {
             throw new OlafException(Ui.ERROR_NO_INDEX);
         }
         try {
+
             int index = Integer.parseInt(input) - 1;
+
             if (index < 0 || index >= tasks.size()) {
                 throw new OlafException(Ui.ERROR_INVALID_INDEX);
             }
             tasks.get(index).markAsDone();
             ui.showMarked(tasks.get(index));
+
+            storage.save(tasks);
+
         } catch (NumberFormatException e) {
             throw new OlafException(Ui.ERROR_NOT_A_NUMBER);
         }
@@ -154,12 +172,16 @@ public class Olaf {
             throw new OlafException(Ui.ERROR_NO_INDEX);
         }
         try {
+
             int index = Integer.parseInt(input) - 1;
+
             if (index < 0 || index >= tasks.size()) {
                 throw new OlafException(Ui.ERROR_INVALID_INDEX);
             }
             tasks.get(index).unmarkAsDone();
             ui.showUnmarked(tasks.get(index));
+
+            storage.save(tasks);
         } catch (NumberFormatException e) {
             throw new OlafException(Ui.ERROR_NOT_A_NUMBER);
         }
@@ -176,6 +198,8 @@ public class Olaf {
             }
             Task removedTask = tasks.remove(index);
             ui.showDeleted(removedTask, tasks.size());
+
+            storage.save(tasks);
         } catch (NumberFormatException e) {
             throw new OlafException(Ui.ERROR_NOT_A_NUMBER);
         }

@@ -1,0 +1,3 @@
+T | 0 | read git
+D | 0 | read book
+E | 0 | cs2113 lecture
