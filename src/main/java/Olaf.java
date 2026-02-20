@@ -1,4 +1,5 @@
 import java.util.Scanner;
+import java.util.ArrayList;
 
 import Tasks.Deadline;
 import Tasks.Event;
@@ -17,13 +18,17 @@ public class Olaf {
     private static final String COMMAND_DEADLINE = "deadline";
     private static final String COMMAND_EVENT = "event";
 
-    private static Task[] tasks = new Task[CAPACITY];
-    private static int taskCount = 0;
+    private static ArrayList<Task> tasks = new ArrayList<>();
 
     private static Ui ui = new Ui();
 
+    private static Storage storage = new Storage("./data/olaf.txt");
+
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
+
+        tasks = storage.load();
+
         ui.showWelcome();
 
         boolean isActive = true;
@@ -44,7 +49,7 @@ public class Olaf {
                     break;
 
                 case COMMAND_LIST:
-                    ui.showTaskList(tasks, taskCount);
+                    ui.showTaskList(tasks);
                     break;
 
                 case COMMAND_MARK:
@@ -81,9 +86,11 @@ public class Olaf {
         if (input.isEmpty()) {
             throw new OlafException(Ui.ERROR_EMPTY_TASK);
         }
-        tasks[taskCount] = new Todo(input);
-        taskCount++;
-        ui.showAdded(tasks[taskCount - 1], taskCount);
+        Todo newTodo = new Todo(input);
+        tasks.add(newTodo);
+        ui.showAdded(newTodo, tasks.size());
+
+        storage.save(tasks);
     }
 
     private static void addDeadline(String input) throws OlafException {
@@ -94,9 +101,11 @@ public class Olaf {
             throw new OlafException(Ui.ERROR_MISSING_BY);
         }
         String[] parts = input.split(" /by ");
-        tasks[taskCount] = new Deadline(parts[0], parts[1]);
-        taskCount++;
-        ui.showAdded(tasks[taskCount - 1], taskCount);
+        Deadline newDeadline = new Deadline(parts[0], parts[1]);
+        tasks.add(newDeadline);
+        ui.showAdded(newDeadline, tasks.size());
+
+        storage.save(tasks);
     }
 
     private static void addEvent(String input) throws OlafException {
@@ -124,9 +133,11 @@ public class Olaf {
             throw new OlafException(Ui.ERROR_MISSING_TO);
         }
 
-        tasks[taskCount] = new Event(description, timeParts[0], timeParts[1]);
-        taskCount++;
-        ui.showAdded(tasks[taskCount - 1], taskCount);
+        Event newEvent = new Event(description, timeParts[0], timeParts[1]);
+        tasks.add(newEvent);
+        ui.showAdded(newEvent, tasks.size());
+
+        storage.save(tasks);
     }
 
     private static void markTask(String args) throws OlafException {
@@ -135,11 +146,13 @@ public class Olaf {
         }
         try {
             int index = Integer.parseInt(args) - 1;
-            if (index < 0 || index >= taskCount) {
+            if (index < 0 || index >= tasks.size()) {
                 throw new OlafException(Ui.ERROR_INVALID_INDEX);
             }
-            tasks[index].markAsDone();
-            ui.showMarked(tasks[index]);
+            tasks.get(index).markAsDone();
+            ui.showMarked(tasks.get(index));
+
+            storage.save(tasks);
         } catch (NumberFormatException e) {
             throw new OlafException(Ui.ERROR_NOT_A_NUMBER);
         }
@@ -151,11 +164,13 @@ public class Olaf {
         }
         try {
             int index = Integer.parseInt(args) - 1;
-            if (index < 0 || index >= taskCount) {
+            if (index < 0 || index >= tasks.size()) {
                 throw new OlafException(Ui.ERROR_INVALID_INDEX);
             }
-            tasks[index].unmarkAsDone();
-            ui.showUnmarked(tasks[index]);
+            tasks.get(index).unmarkAsDone();
+            ui.showUnmarked(tasks.get(index));
+
+            storage.save(tasks);
         } catch (NumberFormatException e) {
             throw new OlafException(Ui.ERROR_NOT_A_NUMBER);
         }
