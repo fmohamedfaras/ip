@@ -17,6 +17,9 @@ public class Olaf {
     private static final String COMMAND_DEADLINE = "deadline";
     private static final String COMMAND_EVENT = "event";
     private static final String COMMAND_DELETE = "delete";
+    public static final String BY = " /by ";
+    public static final String FROM = " /from ";
+    public static final String TO = " /to ";
 
     private static ArrayList<Task> tasks = new ArrayList<>();
 
@@ -101,10 +104,10 @@ public class Olaf {
         if (input.isEmpty()) {
             throw new OlafException(Ui.ERROR_EMPTY_TASK);
         }
-        if (!input.contains(" /by ")) {
+        if (!input.contains(BY)) {
             throw new OlafException(Ui.ERROR_MISSING_BY);
         }
-        String[] parts = input.split(" /by ");
+        String[] parts = input.split(BY);
         Deadline newDeadline = new Deadline(parts[0], parts[1]);
         tasks.add(newDeadline);
         ui.showAdded(newDeadline, tasks.size());
@@ -118,19 +121,19 @@ public class Olaf {
         if (input.isEmpty()) {
             throw new OlafException(Ui.ERROR_EMPTY_TASK);
         }
-        if (!input.contains(" /from ")) {
+        if (!input.contains(FROM)) {
             throw new OlafException(Ui.ERROR_MISSING_FROM_TO);
         }
 
-        if (!input.contains(" /to ")) {
+        if (!input.contains(TO)) {
             throw new OlafException(Ui.ERROR_MISSING_TO);
         }
         // split by " /from " first
-        String[] parts = input.split(" /from ");
+        String[] parts = input.split(FROM);
         String description = parts[0];
 
         // split the second part by " /to "
-        String[] timeParts = parts[1].split(" /to ");
+        String[] timeParts = parts[1].split(TO);
         String from = timeParts[0];
         String to = timeParts[1];
 
