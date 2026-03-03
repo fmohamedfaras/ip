@@ -70,18 +70,16 @@ public class TaskList {
         }
         // split by " /from " first
         String[] parts = input.split(FROM);
-        String description = parts[0];
+        String description = parts[0].trim();
 
         // split the second part by " /to "
         String[] timeParts = parts[1].split(TO);
-        String from = timeParts[0];
-        String to = timeParts[1];
 
-        if (to.isBlank()) {
+        if (timeParts.length < 2 || timeParts[1].isBlank()) {
             throw new OlafException(Ui.ERROR_MISSING_TO);
         }
 
-        Event newEvent = new Event(description, from.trim(), to.trim());
+        Event newEvent = new Event(description, timeParts[1].trim(), timeParts[1].trim());
         tasks.add(newEvent);
         return newEvent;
     }
