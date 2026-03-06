@@ -7,6 +7,6 @@ public class ExitCommand extends Command {
 
     @Override
     public boolean isExit() {
-        return true; // This tells the main loop to stop!
+        return true;
     }
 }
