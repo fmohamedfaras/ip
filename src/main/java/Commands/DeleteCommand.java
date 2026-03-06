@@ -1,6 +1,10 @@
 package Commands;
 
 import Tasks.Task;
+import Tasks.TaskList;
+import core.Ui;
+import core.Storage;
+import core.OlafException;
 
 public class DeleteCommand extends Command {
     private int index;
