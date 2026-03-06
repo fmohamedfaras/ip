@@ -1,3 +1,5 @@
+package Commands;
+
 import Tasks.Task;
 
 public class AddCommand extends Command {

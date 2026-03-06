@@ -1,9 +1,6 @@
-import java.util.ArrayList;
+package Tasks;
 
-import Tasks.Deadline;
-import Tasks.Event;
-import Tasks.Task;
-import Tasks.Todo;
+import java.util.ArrayList;
 
 
 public class TaskList {
@@ -88,17 +85,12 @@ public class TaskList {
         return newEvent;
     }
 
-    public Task markTask(String input) throws OlafException {
-        if (input.isEmpty()) {
-            throw new OlafException(Ui.ERROR_NO_INDEX);
-        }
+    public Task markTask(int input) throws OlafException {
         try {
-            int index = Integer.parseInt(input) - 1;
-
-            if (index < 0 || index >= tasks.size()) {
+            if (input < 0 || input >= tasks.size()) {
                 throw new OlafException(Ui.ERROR_INVALID_INDEX);
             }
-            Task task = tasks.get(index);
+            Task task = tasks.get(input);
             task.markAsDone();
             return task;
         } catch (NumberFormatException e) {
@@ -106,17 +98,12 @@ public class TaskList {
         }
     }
 
-    public Task unmarkTask(String input) throws OlafException {
-        if (input.isEmpty()) {
-            throw new OlafException(Ui.ERROR_NO_INDEX);
-        }
+    public Task unmarkTask(int input) throws OlafException {
         try {
-            int index = Integer.parseInt(input) - 1;
-
-            if (index < 0 || index >= tasks.size()) {
+            if (input < 0 || input >= tasks.size()) {
                 throw new OlafException(Ui.ERROR_INVALID_INDEX);
             }
-            Task task = tasks.get(index);
+            Task task = tasks.get(input);
             task.unmarkAsDone();
             return task;
         } catch (NumberFormatException e) {
@@ -124,12 +111,8 @@ public class TaskList {
         }
     }
 
-    public Task deleteTask(String input) throws OlafException {
-        if (input.isEmpty()) {
-            throw new OlafException(Ui.ERROR_NO_DELETE_INDEX);
-        }
+    public Task deleteTask(int index) throws OlafException {
         try {
-            int index = Integer.parseInt(input) - 1;
             if (index < 0 || index >= tasks.size()) {
                 throw new OlafException(Ui.ERROR_INVALID_INDEX);
             }
