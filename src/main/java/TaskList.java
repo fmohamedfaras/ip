@@ -31,6 +31,10 @@ public class TaskList {
         return tasks;
     }
 
+    public void addTask(Task task) {
+        tasks.add(task);
+    }
+
     public Task addTodo(String input) throws OlafException {
         if (input.isEmpty()) {
             throw new OlafException(Ui.ERROR_EMPTY_TASK);
