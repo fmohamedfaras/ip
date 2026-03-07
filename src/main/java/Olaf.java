@@ -1,87 +1,42 @@
 import java.util.Scanner;
-import java.util.ArrayList;
 
-import Tasks.Deadline;
-import Tasks.Event;
-import Tasks.Task;
-import Tasks.Todo;
-
+import Tasks.TaskList;
+import core.OlafException;
+import core.Storage;
+import core.Ui;
+import core.Parser;
+import Commands.Command;
 
 public class Olaf {
 
-    private static final String COMMAND_LIST = "list";
-    private static final String COMMAND_BYE = "bye";
-    private static final String COMMAND_MARK = "mark";
-    private static final String COMMAND_UNMARK = "unmark";
-    private static final String COMMAND_TODO = "todo";
-    private static final String COMMAND_DEADLINE = "deadline";
-    private static final String COMMAND_EVENT = "event";
-    private static final String COMMAND_DELETE = "delete";
-    public static final String BY = " /by ";
-    public static final String FROM = " /from ";
-    public static final String TO = " /to ";
+    // 1. Removed "static" - these now belong to the Olaf instance
+    private TaskList tasks;
+    private Ui ui;
+    private Storage storage;
 
-    private static ArrayList<Task> tasks = new ArrayList<>();
+    public Olaf(String filePath) {
+        ui = new Ui();
+        storage = new Storage(filePath);
+        try {
+            tasks = new TaskList(storage.load());
+        } catch (OlafException e) {
+            ui.showError("Unable to load file. Starting with an empty list!");
+            tasks = new TaskList();
+        }
+    }
 
-    private static Ui ui = new Ui();
-
-    private static Storage storage = new Storage("./data/olaf.txt");
-
-    public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-
-        tasks = storage.load();
-
+    public void run() {
         ui.showWelcome();
+        Scanner scanner = new Scanner(System.in);
+        boolean isExit = false;
 
-        boolean isActive = true;
-
-        while (isActive) {
-           String input = scanner.nextLine();
-            ui.showLine();
-
-            String[] parts = input.split(" ", 2); // Split into command + rest of string
-            String command = parts[0];
-            String taskName = (parts.length > 1) ? parts[1] : "";
-
+        while (!isExit) {
             try {
-                switch (command) {
-                case COMMAND_BYE:
-                    ui.showBye();
-                    isActive = false;
-                    break;
-
-                case COMMAND_LIST:
-                    ui.showTaskList(tasks);
-                    break;
-
-                case COMMAND_MARK:
-                    markTask(taskName);
-                    break;
-
-                case COMMAND_UNMARK:
-                    unmarkTask(taskName);
-                    break;
-
-                case COMMAND_TODO:
-                    addTodo(taskName);
-                    break;
-
-                case COMMAND_DEADLINE:
-                    addDeadline(taskName);
-                    break;
-
-                case COMMAND_EVENT:
-                    addEvent(taskName);
-                    break;
-
-                case COMMAND_DELETE:
-                    deleteTask(taskName);
-                    break;
-
-                default:
-                    throw new OlafException(Ui.ERROR_UNKNOWN_COMMAND);
-                }
+                String fullCommand = scanner.nextLine();
+                ui.showLine();
+                Command c = Parser.parse(fullCommand);
+                c.execute(tasks, ui, storage);
+                isExit = c.isExit();
             } catch (OlafException e) {
                 ui.showError(e.getMessage());
             }
@@ -89,125 +44,7 @@ public class Olaf {
         scanner.close();
     }
 
-    public static void addTodo(String input) throws OlafException {
-        if (input.isEmpty()) {
-            throw new OlafException(Ui.ERROR_EMPTY_TASK);
-        }
-        Todo newTodo = new Todo(input);
-        tasks.add(newTodo);
-        ui.showAdded(newTodo, tasks.size());
-
-        storage.save(tasks);
+    public static void main(String[] args) {
+        new Olaf("./data/olaf.txt").run();
     }
-
-    private static void addDeadline(String input) throws OlafException {
-        if (input.isEmpty()) {
-            throw new OlafException(Ui.ERROR_EMPTY_TASK);
-        }
-        if (!input.contains(BY)) {
-            throw new OlafException(Ui.ERROR_MISSING_BY);
-        }
-        String[] parts = input.split(BY);
-        Deadline newDeadline = new Deadline(parts[0], parts[1]);
-        tasks.add(newDeadline);
-        ui.showAdded(newDeadline, tasks.size());
-
-        storage.save(tasks);
-
-    }
-
-    private static void addEvent(String input) throws OlafException {
-
-        if (input.isEmpty()) {
-            throw new OlafException(Ui.ERROR_EMPTY_TASK);
-        }
-        if (!input.contains(FROM)) {
-            throw new OlafException(Ui.ERROR_MISSING_FROM_TO);
-        }
-
-        if (!input.contains(TO)) {
-            throw new OlafException(Ui.ERROR_MISSING_TO);
-        }
-        // split by " /from " first
-        String[] parts = input.split(FROM);
-        String description = parts[0];
-
-        // split the second part by " /to "
-        String[] timeParts = parts[1].split(TO);
-        String from = timeParts[0];
-        String to = timeParts[1];
-
-        if (to.isBlank()) {
-            throw new OlafException(Ui.ERROR_MISSING_TO);
-        }
-
-        Event newEvent = new Event(description, timeParts[0], timeParts[1]);
-        tasks.add(newEvent);
-        ui.showAdded(newEvent, tasks.size());
-
-        storage.save(tasks);
-
-    }
-
-    private static void markTask(String input) throws OlafException {
-        if (input.isEmpty()) {
-            throw new OlafException(Ui.ERROR_NO_INDEX);
-        }
-        try {
-
-            int index = Integer.parseInt(input) - 1;
-
-            if (index < 0 || index >= tasks.size()) {
-                throw new OlafException(Ui.ERROR_INVALID_INDEX);
-            }
-            tasks.get(index).markAsDone();
-            ui.showMarked(tasks.get(index));
-
-            storage.save(tasks);
-
-        } catch (NumberFormatException e) {
-            throw new OlafException(Ui.ERROR_NOT_A_NUMBER);
-        }
-    }
-
-    private static void unmarkTask(String input) throws OlafException {
-        if (input.isEmpty()) {
-            throw new OlafException(Ui.ERROR_NO_INDEX);
-        }
-        try {
-
-            int index = Integer.parseInt(input) - 1;
-
-            if (index < 0 || index >= tasks.size()) {
-                throw new OlafException(Ui.ERROR_INVALID_INDEX);
-            }
-            tasks.get(index).unmarkAsDone();
-            ui.showUnmarked(tasks.get(index));
-
-            storage.save(tasks);
-        } catch (NumberFormatException e) {
-            throw new OlafException(Ui.ERROR_NOT_A_NUMBER);
-        }
-    }
-
-    private static void deleteTask(String input) throws OlafException {
-        if (input.isEmpty()) {
-            throw new OlafException(Ui.ERROR_NO_DELETE_INDEX);
-        }
-        try {
-            int index = Integer.parseInt(input) - 1;
-            if (index < 0 || index >= tasks.size()) {
-                throw new OlafException(Ui.ERROR_INVALID_INDEX);
-            }
-            Task removedTask = tasks.remove(index);
-            ui.showDeleted(removedTask, tasks.size());
-
-            storage.save(tasks);
-        } catch (NumberFormatException e) {
-            throw new OlafException(Ui.ERROR_NOT_A_NUMBER);
-        }
-    }
-
 }
-
-

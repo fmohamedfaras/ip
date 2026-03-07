@@ -1,3 +1,5 @@
+package core;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -33,7 +35,7 @@ public class Storage {
         }
     }
 
-    public ArrayList<Task> load() {
+    public ArrayList<Task> load() throws OlafException {
         ArrayList<Task> loadedTasks = new ArrayList<>();
         File file = new File(filePath);
 
