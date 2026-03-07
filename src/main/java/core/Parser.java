@@ -1,5 +1,7 @@
 package core;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import Commands.Command;
 import Commands.AddCommand;
 import Commands.DeleteCommand;
@@ -50,7 +52,12 @@ public class Parser {
 
         case COMMAND_DEADLINE:
             String[] deadlineInputs = parseDeadline(taskDesc);
-            return new AddCommand(new Deadline(deadlineInputs[0], deadlineInputs[1]));
+            try {
+                LocalDate parsedDate = LocalDate.parse(deadlineInputs[1]);
+                return new AddCommand(new Deadline(deadlineInputs[0], parsedDate));
+            } catch (DateTimeParseException e) {
+                throw new OlafException("Please enter the date in yyyy-MM-dd format (e.g., 2026-10-15).");
+            }
 
         case COMMAND_EVENT:
             String[] eventInputs = parseEvent(taskDesc);
