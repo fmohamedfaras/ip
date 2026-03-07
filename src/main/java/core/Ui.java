@@ -10,12 +10,11 @@ public class Ui {
 
     public static final String ERROR_UNKNOWN_COMMAND = "I don't know what that means. Samantha? (laughs hysterically) I don't even know a Samantha!";
     public static final String ERROR_EMPTY_TASK = "Stop it, Sven. Try and focus here. \n     The description is empty. A task needs a name.";
-    public static final String ERROR_MISSING_BY = "I need to know when! Please use '/by' so I don't forget.";
-    public static final String ERROR_MISSING_FROM_TO = "Events need a start and end! Use '/from' and '/to'. Time is tricky!";
-    public static final String ERROR_INVALID_INDEX = "I can't find that number! Did it melt?";
-    public static final String ERROR_NO_INDEX = "Who’s the funny-looking donkey… And who’s the reindeer? You didn't tell me the number!";
+    public static final String ERROR_MISSING_BY = "I need to know when! Please description and '/by' so I don't forget.";
+    public static final String ERROR_MISSING_FROM_TO = "Events need a description, start and end! Use '/from' and '/to'. Time is tricky!";
+    public static final String ERROR_INVALID_INDEX = "I can't find that index! Did it melt?";
+    public static final String ERROR_NO_INDEX = "You didn't tell me the index silly!";
     public static final String ERROR_NOT_A_NUMBER = "I can’t read… or spell but that is definitely not a number!";
-    public static final String ERROR_NO_DELETE_INDEX = "You didn't tell me the number to delete silly!";
 
     public void showWelcome() {
         showLine();
