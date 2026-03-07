@@ -12,7 +12,6 @@ public class Ui {
     public static final String ERROR_EMPTY_TASK = "Stop it, Sven. Try and focus here. \n     The description is empty. A task needs a name.";
     public static final String ERROR_MISSING_BY = "I need to know when! Please use '/by' so I don't forget.";
     public static final String ERROR_MISSING_FROM_TO = "Events need a start and end! Use '/from' and '/to'. Time is tricky!";
-    public static final String ERROR_MISSING_TO = "You forgot the ending time! Use '/to'.";
     public static final String ERROR_INVALID_INDEX = "I can't find that number! Did it melt?";
     public static final String ERROR_NO_INDEX = "Who’s the funny-looking donkey… And who’s the reindeer? You didn't tell me the number!";
     public static final String ERROR_NOT_A_NUMBER = "I can’t read… or spell but that is definitely not a number!";

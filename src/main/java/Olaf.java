@@ -9,15 +9,6 @@ import core.Ui;
 
 public class Olaf {
 
-    private static final String COMMAND_LIST = "list";
-    private static final String COMMAND_BYE = "bye";
-    private static final String COMMAND_MARK = "mark";
-    private static final String COMMAND_UNMARK = "unmark";
-    private static final String COMMAND_TODO = "todo";
-    private static final String COMMAND_DEADLINE = "deadline";
-    private static final String COMMAND_EVENT = "event";
-    private static final String COMMAND_DELETE = "delete";
-
     private static TaskList taskList;
     private static Ui ui = new Ui();
     private static Storage storage = new Storage("./data/olaf.txt");
