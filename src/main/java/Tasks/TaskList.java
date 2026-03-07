@@ -54,4 +54,15 @@ public class TaskList {
             }
             return tasks.remove(index);
         }
+
+    public TaskList findTasks(String keyword) {
+        TaskList foundTasks = new TaskList();
+        for (Task task : tasks) {
+            if (String.valueOf(task.getDescription().contains(keyword)) {
+                foundTasks.addTask(task);
+            }
+        }
+        return foundTasks;
+    }
 }
+
