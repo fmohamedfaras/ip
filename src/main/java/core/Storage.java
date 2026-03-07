@@ -35,7 +35,7 @@ public class Storage {
         }
     }
 
-    public ArrayList<Task> load() {
+    public ArrayList<Task> load() throws OlafException {
         ArrayList<Task> loadedTasks = new ArrayList<>();
         File file = new File(filePath);
 

@@ -1,86 +1,42 @@
 import java.util.Scanner;
 
-import Tasks.Task;
 import Tasks.TaskList;
 import core.OlafException;
 import core.Storage;
 import core.Ui;
-
+import core.Parser;
+import Commands.Command;
 
 public class Olaf {
 
-    private static TaskList taskList;
-    private static Ui ui = new Ui();
-    private static Storage storage = new Storage("./data/olaf.txt");
+    // 1. Removed "static" - these now belong to the Olaf instance
+    private TaskList tasks;
+    private Ui ui;
+    private Storage storage;
 
-    public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
+    public Olaf(String filePath) {
+        ui = new Ui();
+        storage = new Storage(filePath);
+        try {
+            tasks = new TaskList(storage.load());
+        } catch (OlafException e) {
+            ui.showError("Unable to load file. Starting with an empty list!");
+            tasks = new TaskList();
+        }
+    }
 
-        taskList = new TaskList(storage.load());
-
+    public void run() {
         ui.showWelcome();
-        boolean isActive = true;
+        Scanner scanner = new Scanner(System.in);
+        boolean isExit = false;
 
-        while (isActive) {
-           String input = scanner.nextLine();
-            ui.showLine();
-
-            String[] parts = input.split(" ", 2); // Split into command + rest of string
-            String command = parts[0];
-            String taskName = (parts.length > 1) ? parts[1] : "";
-
+        while (!isExit) {
             try {
-                Task modifiedTask;
-
-                switch (command) {
-                case COMMAND_BYE:
-                    ui.showBye();
-                    isActive = false;
-                    break;
-
-                case COMMAND_LIST:
-                    ui.showTaskList(taskList.getTasks());
-                    break;
-
-                case COMMAND_MARK:
-                    modifiedTask = taskList.markTask(taskName);
-                    ui.showMarked(modifiedTask);
-                    storeTaskList();
-                    break;
-
-                case COMMAND_UNMARK:
-                    modifiedTask = taskList.unmarkTask(taskName);
-                    ui.showUnmarked(modifiedTask);
-                    storeTaskList();
-                    break;
-
-                case COMMAND_TODO:
-                    modifiedTask = taskList.addTodo(taskName);
-                    ui.showAdded(modifiedTask, taskList.getSize());
-                    storeTaskList();
-                    break;
-
-                case COMMAND_DEADLINE:
-                    modifiedTask = taskList.addDeadline(taskName);
-                    ui.showAdded(modifiedTask, taskList.getSize());
-                    storeTaskList();
-                    break;
-
-                case COMMAND_EVENT:
-                    modifiedTask = taskList.addEvent(taskName);
-                    ui.showAdded(modifiedTask, taskList.getSize());
-                    storeTaskList();
-                    break;
-
-                case COMMAND_DELETE:
-                    modifiedTask = taskList.deleteTask(taskName);
-                    ui.showDeleted(modifiedTask, taskList.getSize());
-                    storeTaskList();
-                    break;
-
-                default:
-                    throw new OlafException(Ui.ERROR_UNKNOWN_COMMAND);
-                }
+                String fullCommand = scanner.nextLine();
+                ui.showLine();
+                Command c = Parser.parse(fullCommand);
+                c.execute(tasks, ui, storage);
+                isExit = c.isExit();
             } catch (OlafException e) {
                 ui.showError(e.getMessage());
             }
@@ -88,9 +44,7 @@ public class Olaf {
         scanner.close();
     }
 
-    private static void storeTaskList() throws OlafException {
-        storage.save(taskList.getTasks());
+    public static void main(String[] args) {
+        new Olaf("./data/olaf.txt").run();
     }
 }
-
-
