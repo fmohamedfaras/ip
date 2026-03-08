@@ -1,7 +1,6 @@
 # Olaf User Guide
 
-<img src="./Olaf.png" alt="Olaf" width="100">
-
+<img src="./Olaf.png" alt="Olaf" width="100">&nbsp;&nbsp;
 <img src="./Welcome.png" alt="Welcome" width="300">
 
 Olaf is a desktop app for managing your tasks, optimized for use via a Command Line Interface (CLI).
