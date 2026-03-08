@@ -42,14 +42,14 @@ public class Ui {
         showLine();
     }
 
-    public void showTaskList(ArrayList<Task> tasks) {
-        if (tasks.isEmpty()) {
+    public void showTaskList(TaskList tasks) {
+        if (tasks.getSize() == 0) {
             System.out.println(INDENT + "I don’t have a skull. Or bones.");
             System.out.println(INDENT + "Likewise, your list has nothing. Empty.");
         } else {
             System.out.println(INDENT + "Here are the things you need to do:");
-            for (int i = 0; i < tasks.size(); i++) {
-                System.out.println(INDENT + (i + 1) + "." + tasks.get(i));
+            for (int i = 0; i < tasks.getSize(); i++) {
+                System.out.println(INDENT + (i + 1) + "." + tasks.getTask(i));
             }
         }
         showLine();
