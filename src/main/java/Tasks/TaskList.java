@@ -22,6 +22,9 @@ public class TaskList {
         return tasks.size();
     }
 
+    public Task getTask(int index) {
+        return tasks.get(index);
+    }
     public ArrayList<Task> getTasks() {
         return tasks;
     }
@@ -58,7 +61,7 @@ public class TaskList {
     public TaskList findTasks(String keyword) {
         TaskList foundTasks = new TaskList();
         for (Task task : tasks) {
-            if (String.valueOf(task.getDescription().contains(keyword)) {
+            if (task.description.toLowerCase().contains(keyword.toLowerCase())) {
                 foundTasks.addTask(task);
             }
         }

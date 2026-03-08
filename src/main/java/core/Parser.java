@@ -6,6 +6,7 @@ import Commands.Command;
 import Commands.AddCommand;
 import Commands.DeleteCommand;
 import Commands.ExitCommand;
+import Commands.FindCommand;
 import Commands.ListCommand;
 import Commands.MarkCommand;
 import Commands.UnmarkCommand;
@@ -24,6 +25,7 @@ public class Parser {
     private static final String COMMAND_DEADLINE = "deadline";
     private static final String COMMAND_EVENT = "event";
     private static final String COMMAND_DELETE = "delete";
+    private static final String COMMAND_FIND = "find";
 
     public static final String BY = " /by ";
     public static final String FROM = " /from ";
@@ -65,6 +67,9 @@ public class Parser {
 
         case COMMAND_DELETE:
             return new DeleteCommand(parseIndex(taskDesc));
+
+        case COMMAND_FIND:
+            return new FindCommand(parseKeyword(taskDesc));
 
         default:
             throw new OlafException(Ui.ERROR_UNKNOWN_COMMAND);
@@ -151,6 +156,12 @@ public class Parser {
         } catch (NumberFormatException e) {
             throw new OlafException(Ui.ERROR_NOT_A_NUMBER);
         }
+    }
 
+    private static String parseKeyword(String input) throws OlafException {
+        if(input.isBlank()) {
+            throw new OlafException(Ui.ERROR_NO_KEYWORD);
+        }
+        return input.trim();
     }
 }
