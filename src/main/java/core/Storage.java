@@ -12,14 +12,28 @@ import Tasks.Event;
 import Tasks.Task;
 import Tasks.Todo;
 
+/**
+ * Handles the reading and writing of task data to the hard drive.
+ * Ensures that tasks persist between application sessions using standard array data handling.
+ */
 public class Storage {
     private String filePath;
 
+    /**
+     * Constructs a Storage object with the specified file path.
+     *
+     * @param filePath The relative path to the text file where tasks are saved.
+     */
     public Storage(String filePath) {
         this.filePath = filePath;
     }
 
-
+    /**
+     * Saves the current list of tasks to the hard drive.
+     *
+     * @param tasks An Arraylist of tasks to be saved.
+     * @throws OlafException If writing to the file fails.
+     */
     public void save(ArrayList<Task> tasks) throws OlafException {
         try {
             // Create the directory if it doesn't exist
@@ -36,6 +50,12 @@ public class Storage {
         }
     }
 
+    /**
+     * Loads tasks from the hard drive into memory upon startup using a two-pass standard array system.
+     *
+     * @return An Arraylist of Task objects loaded from the save file.
+     * @throws OlafException If the file cannot be read or parsed correctly.
+     */
     public ArrayList<Task> load() throws OlafException {
         ArrayList<Task> loadedTasks = new ArrayList<>();
         File file = new File(filePath);
