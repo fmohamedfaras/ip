@@ -144,9 +144,11 @@ public class Ui {
         if (foundTasks.getSize() == 0) {
             System.out.println(INDENT + "No matching tasks found in your list.");
         }
-        System.out.println(INDENT + "Here are the matching tasks in your list:");
-        for (int i = 0; i < foundTasks.getSize(); i++) {
-            System.out.println(INDENT + (i + 1) + "." + foundTasks.getTask(i));
+        else {
+            System.out.println(INDENT + "Here are the matching tasks in your list:");
+            for (int i = 0; i < foundTasks.getSize(); i++) {
+                System.out.println(INDENT + (i + 1) + "." + foundTasks.getTask(i));
+            }
         }
         showLine();
     }
