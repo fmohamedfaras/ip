@@ -3,6 +3,7 @@ package core;
 import java.util.ArrayList;
 
 import Tasks.Task;
+import Tasks.TaskList;
 
 public class Ui {
     private static final String DIVIDER = "     ____________________________________________________________";
@@ -15,6 +16,7 @@ public class Ui {
     public static final String ERROR_INVALID_INDEX = "I can't find that index! Did it melt?";
     public static final String ERROR_NO_INDEX = "You didn't tell me the index silly!";
     public static final String ERROR_NOT_A_NUMBER = "I can’t read… or spell but that is definitely not a number!";
+    public static final String ERROR_NO_KEYWORD = "Please provide a keyword to search for!";
 
     public void showWelcome() {
         showLine();
@@ -79,6 +81,17 @@ public class Ui {
         System.out.println(INDENT + "This just got a lot less complicated. I've deleted this task:");
         System.out.println(INDENT + task);
         System.out.println(INDENT + "Now you have " + count + taskPlural + "in the list.");
+        showLine();
+    }
+
+    public void showFoundTasks(TaskList foundTasks) {
+        if (foundTasks.getSize() == 0) {
+            System.out.println(INDENT + "No matching tasks found in your list.");
+        }
+        System.out.println(INDENT + "Here are the matching tasks in your list:");
+        for (int i = 0; i < foundTasks.getSize(); i++) {
+            System.out.println(INDENT + (i + 1) + "." + foundTasks.getTask(i));
+        }
         showLine();
     }
 }
