@@ -21,13 +21,19 @@ public class Ui {
     public static final String ERROR_NO_INDEX = "You didn't tell me the index silly!";
     public static final String ERROR_NOT_A_NUMBER = "I can’t read… or spell but that is definitely not a number!";
     public static final String ERROR_NO_KEYWORD = "Please provide a keyword to search for!";
+    public static final String ART = "  ___  _        __ \n" +
+            INDENT + " / _ \\| | __ _ / _|\n" +
+            INDENT + "| | | | |/ _` | |_ \n" +
+            INDENT + "| |_| | | (_| |  _|\n" +
+            INDENT + " \\___/|_|\\__,_|_|  ";
 
     /**
      * Displays the welcome message when the application starts.
      */
     public void showWelcome() {
         showLine();
-        System.out.println(INDENT + "Hello! I'm Olaf!");
+        System.out.println(INDENT + "Hello! I'm ");
+        System.out.println(INDENT + ART);
         System.out.println(INDENT + "I like warm hugs!");
         System.out.println(INDENT + "What can I do for you on this fine summer day?");
         showLine();
