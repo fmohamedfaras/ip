@@ -9,9 +9,7 @@ Olaf is a desktop app for managing your tasks, optimized for use via a Command L
 
 ## Table of Contents
 
-* [Installation](#installation)
-
-- [Quick Start](#quick-start)
+* [Quick Start](#quick-start)
 * [Features](#features)
     * [Adding a todo: `todo`](#adding-a-todo--todo)
     * [Adding a deadline: `deadline`](#adding-a-deadline--deadline)
