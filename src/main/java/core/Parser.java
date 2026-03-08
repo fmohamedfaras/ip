@@ -14,8 +14,10 @@ import Tasks.Todo;
 import Tasks.Event;
 import Tasks.Deadline;
 
-
-
+/**
+ * Handles the interpretation of user input.
+ * Translates raw string commands into executable Command objects.
+ */
 public class Parser {
     private static final String COMMAND_LIST = "list";
     private static final String COMMAND_BYE = "bye";
@@ -31,6 +33,13 @@ public class Parser {
     public static final String FROM = " /from ";
     public static final String TO = " /to ";
 
+    /**
+     * Parses the raw user input string and translates it into an executable Command object.
+     *
+     * @param fullCommand The full text typed by the user in the terminal.
+     * @return The specific Command object to be executed.
+     * @throws OlafException If the command is unknown or improperly formatted.
+     */
     public static Command parse(String fullCommand) throws OlafException{
         String[] parts = fullCommand.split(" ", 2); // Split into command + rest of string
         String command = parts[0].toLowerCase();
@@ -76,6 +85,13 @@ public class Parser {
         }
     }
 
+    /**
+     * Validates and extracts the description for a Todo task.
+     *
+     * @param input The user input following the "todo" command.
+     * @return The trimmed description of the Todo task.
+     * @throws OlafException If the description is empty.
+     */
     private static String parseTodo(String input) throws OlafException {
         String description = input.trim();
         if (description.isBlank()) {
@@ -84,6 +100,13 @@ public class Parser {
         return description;
     }
 
+    /**
+     * Validates and extracts the description and date for a Deadline task.
+     *
+     * @param input The user input following the "deadline" command.
+     * @return A String array where index 0 is the description and index 1 is the deadline string.
+     * @throws OlafException If the description is empty or the "/by" keyword is missing.
+     */
     private static String[] parseDeadline(String input) throws OlafException {
         if (input.isBlank()) {
             throw new OlafException(Ui.ERROR_EMPTY_TASK);
@@ -111,6 +134,13 @@ public class Parser {
         return new String[] {description, by};
     }
 
+    /**
+     * Validates and extracts the description, start time, and end time for an Event task.
+     *
+     * @param input The user input following the "event" command.
+     * @return A String array where index 0 is the description, index 1 is the start time, and index 2 is the end time.
+     * @throws OlafException If the description is empty or the "/from" or "/to" keywords are missing.
+     */
     private static String[] parseEvent(String input) throws OlafException{
         if (input.isBlank()) {
             throw new OlafException(Ui.ERROR_EMPTY_TASK);
@@ -147,6 +177,14 @@ public class Parser {
         return new String[] {description, from, to};
     }
 
+    /**
+     * Converts a user-provided string into a zero-based integer index.
+     * Used for commands that target specific tasks (e.g., mark, unmark, delete).
+     *
+     * @param input The string representing the list number.
+     * @return The zero-based integer index.
+     * @throws OlafException If the input is empty or cannot be parsed as a number.
+     */
     private static int parseIndex(String input) throws OlafException {
         if (input.isBlank()) {
             throw new OlafException(Ui.ERROR_NO_INDEX);
@@ -158,6 +196,13 @@ public class Parser {
         }
     }
 
+    /**
+     * Validates and extracts the search keyword for a Find command.
+     *
+     * @param input The user input following the "find" command.
+     * @return The trimmed search keyword.
+     * @throws OlafException If the keyword is missing or only contains whitespace.
+     */
     private static String parseKeyword(String input) throws OlafException {
         if(input.isBlank()) {
             throw new OlafException(Ui.ERROR_NO_KEYWORD);
